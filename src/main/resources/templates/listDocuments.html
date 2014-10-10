@@ -39,6 +39,15 @@
         <div class="row-fluid">
             <h1>All documents</h1>
 
+			<form action="#" th:action="'/documents/findByTitle'" method="GET" class="form-search">
+				<fieldset>
+					<legend>search documents by title</legend>
+					<div class="input-append">
+						<input type="text" name="title" class="search-query input-medium"/>
+						<button type="submit" class="btn">search</button>
+					</div>
+				</fieldset>
+			</form>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -53,21 +62,12 @@
                     </tr>
                     <tr th:each="document : ${documents}">
                         <td><a th:href="'/document/'+${document.documentid}" th:text="${document.title}" title="click for details"></a></td>
-                        <td th:text="${document.user.name}"></td>
-                        <td><a href="'/document/'+${document.documentid}+'/download'">download</a></td>
+                        <td><a th:href="'/user/'+${document.user.userid}" th:text="${document.user.name}"></a></td>
+                        <td><a th:href="'/document/'+${document.documentid}+'/download'" class="btn">download</a></td>
                     </tr>
                 </tbody>
             </table>
 
-			<form action="#" th:action="'/documents/findByTitle'" method="GET" class="form-search">
-				<fieldset>
-					<legend>search documents by title</legend>
-					<div class="input-append">
-						<input type="text" name="title" class="search-query input-medium"/>
-						<button type="submit" class="btn">search</button>
-					</div>
-				</fieldset>
-			</form>
         </div>
     </div>
 

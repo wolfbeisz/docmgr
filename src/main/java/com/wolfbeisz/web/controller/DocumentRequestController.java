@@ -14,12 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.wolfbeisz.model.Change;
 import com.wolfbeisz.model.Comment;
 import com.wolfbeisz.model.Document;
 import com.wolfbeisz.model.File;
+import com.wolfbeisz.repository.ChangeRepository;
 import com.wolfbeisz.repository.CommentRepository;
 import com.wolfbeisz.repository.DocumentRepository;
 import com.wolfbeisz.repository.FileRepository;
+import com.wolfbeisz.repository.UserRepository;
 import com.wolfbeisz.web.service.FileManager;
 
 @Controller
@@ -32,23 +35,29 @@ public class DocumentRequestController {
 	private CommentRepository commentRepo_;
 	
 	@Autowired
+	private ChangeRepository changeRepo_;
+	
+	@Autowired
+	private UserRepository userRepo_;
+	
+	@Autowired
 	private FileManager fileMgr_;
 	
 	@Autowired
 	private FileRepository fileRepo_;
 	
 	@RequestMapping(method=RequestMethod.GET,value="/document/{id}")
-	public String showDocument(Model model, @PathVariable String id)
+	public String showDocument(Model model, @PathVariable long id)
 	{
-		Document document = documentRepo_.findOne(Long.parseLong(id));
+		Document document = documentRepo_.findOne(id);
 		model.addAttribute("document", document);
 		
 		Collection<Comment> comments = commentRepo_.findByDocument(document);
 		model.addAttribute("comments", comments);
 		
-//		model.addAttribute("title", document.getTitle());
-//		model.addAttribute("author", document.getUser().getName());
-//		model.addAttribute("tags", document.getTags());
+		long userid = userRepo_.findOne(1L).getUserid();
+		Change openChange = changeRepo_.findOpenChanges(id, userid);
+		model.addAttribute("openChange", openChange);
 		
 		return "displayDocument";
 	}
@@ -79,6 +88,14 @@ public class DocumentRequestController {
 		return "listDocuments";
 	}
 	
+	@RequestMapping(method=RequestMethod.GET,value="/document/{id}/download")
+	public String download(@PathVariable("id") long documentId)
+	{
+		File latest = fileRepo_.findLatest(documentId);
+		return "redirect:/file/"+latest.getFileid()+"/download";
+	}
+	
+	//TODO: does not belong here
 	@RequestMapping(method=RequestMethod.GET,value="/")
 	public String root()
 	{

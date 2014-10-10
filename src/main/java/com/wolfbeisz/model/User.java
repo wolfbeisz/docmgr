@@ -31,6 +31,10 @@ public class User implements Serializable {
 	@OneToMany(mappedBy="user")
 	private List<Document> documents;
 
+	//bi-directional many-to-one association to Change
+	@OneToMany(mappedBy="user")
+	private List<Change> changes;
+
 	public User() {
 	}
 
@@ -100,6 +104,28 @@ public class User implements Serializable {
 		document.setUser(null);
 
 		return document;
+	}
+
+	public List<Change> getChanges() {
+		return this.changes;
+	}
+
+	public void setChanges(List<Change> changes) {
+		this.changes = changes;
+	}
+
+	public Change addChange(Change change) {
+		getChanges().add(change);
+		change.setUser(this);
+
+		return change;
+	}
+
+	public Change removeChange(Change change) {
+		getChanges().remove(change);
+		change.setUser(null);
+
+		return change;
 	}
 
 }

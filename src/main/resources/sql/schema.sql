@@ -1,3 +1,4 @@
+DROP TABLE changes;
 DROP TABLE files;
 DROP TABLE comments;
 DROP TABLE tags;
@@ -40,10 +41,23 @@ create table files (
 fileid NUMBER(14,0) PRIMARY KEY,
 documentid NUMBER(14,0) NOT NULL,
 path VARCHAR2(4000) NOT NULL,
+version NUMBER(14,0) NOT NULL,
+uploadstamp TIMESTAMP NOT NULL,
 CONSTRAINT files_path_uk UNIQUE(path),
-CONSTRAINT files_documentid_fk FOREIGN KEY (documentid) REFERENCES documents(documentid)
+CONSTRAINT files_documentid_fk FOREIGN KEY (documentid) REFERENCES documents(documentid),
+CONSTRAINT files_version_uk UNIQUE(documentid, version)
+);
+
+create table changes (
+changeid NUMBER(14, 0) PRIMARY KEY,
+userid NUMBER(14, 0) NOT NULL,
+fileid NUMBER(14, 0) NOT NULL,
+checkoutstamp TIMESTAMP NOT NULL,
+checkinstamp TIMESTAMP,
+CONSTRAINT checkouts_userid FOREIGN KEY (userid) REFERENCES users(userid),
+CONSTRAINT checkouts_fileid FOREIGN KEY (fileid) REFERENCES files(fileid)
 );
 
 insert into users values (1, 'Philipp Wolfbeisz', 'philipp@wolfbeisz.com');
 commit;
-CREATE SEQUENCE hibernate_sequence START WITH 1 INCREMENT BY 1;
+--CREATE SEQUENCE hibernate_sequence START WITH 1 INCREMENT BY 1;

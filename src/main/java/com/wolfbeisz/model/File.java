@@ -2,6 +2,9 @@ package com.wolfbeisz.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import java.sql.Timestamp;
+import java.math.BigDecimal;
+import java.util.List;
 
 
 /**
@@ -21,10 +24,19 @@ public class File implements Serializable {
 	@Column(name="PATH")
 	private String path;
 
+	private Timestamp uploadstamp;
+
+	@Column(name="VERSION")
+	private BigDecimal version;
+
 	//bi-directional many-to-one association to Document
 	@ManyToOne
 	@JoinColumn(name="DOCUMENTID")
 	private Document document;
+
+	//bi-directional many-to-one association to Change
+	@OneToMany(mappedBy="file")
+	private List<Change> changes;
 
 	public File() {
 	}
@@ -45,12 +57,50 @@ public class File implements Serializable {
 		this.path = path;
 	}
 
+	public Timestamp getUploadstamp() {
+		return this.uploadstamp;
+	}
+
+	public void setUploadstamp(Timestamp uploadstamp) {
+		this.uploadstamp = uploadstamp;
+	}
+
+	public BigDecimal getVersion() {
+		return this.version;
+	}
+
+	public void setVersion(BigDecimal version) {
+		this.version = version;
+	}
+
 	public Document getDocument() {
 		return this.document;
 	}
 
 	public void setDocument(Document document) {
 		this.document = document;
+	}
+
+	public List<Change> getChanges() {
+		return this.changes;
+	}
+
+	public void setChanges(List<Change> changes) {
+		this.changes = changes;
+	}
+
+	public Change addChange(Change change) {
+		getChanges().add(change);
+		change.setFile(this);
+
+		return change;
+	}
+
+	public Change removeChange(Change change) {
+		getChanges().remove(change);
+		change.setFile(null);
+
+		return change;
 	}
 
 }

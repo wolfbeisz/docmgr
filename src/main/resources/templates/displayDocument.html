@@ -42,12 +42,19 @@
 
 			
 			<h3>Manage document</h3>
-			<form style="display:inline;" action="#" th:action="'/document/'+${document.documentid}+'/checkout'" method="POST">
-				<button class="btn">checkout</button>
+			<!-- only show this form if the user hasn't yet checked this document out -->
+			<form style="display:inline;" action="#" th:action="'/document/'+${document.documentid}+'/checkout'" method="POST" th:if="${openChange} == null">
+				<button type="submit" class="btn">checkout</button>
 			</form>
-			<form style="display:inline;" action="#" th:action="'/document/'+${document.documentid}+'/checkin'" method="POST">			
-					<button class="btn">checkin</button>
+			<!-- only show this form, if the user has checked out this document -->
+			<form style="display:inline;" action="#" th:action="'/document/'+${document.documentid}+'/checkin'" method="POST" th:if="${openChange} != null" enctype="multipart/form-data">			
+				<fieldset>
+					<legend>Checkin</legend>
+					<input type="file" name="document" />
+					<button type="submit" class="btn">checkin</button>
+				</fieldset>
 			</form>
+			
 			<form style="display:inline;" action="#" th:action="'/document/'+${document.documentid}+'/delete'" method="POST">
 				<button type="submit" class="btn">delete document</button>
 			</form>
@@ -59,6 +66,8 @@
 					<tr>
 						<td>fileid</td>
 						<td>path</td>
+						<td>version</td>
+						<td>upload stamp</td>
 						<td>download</td>
 					</tr>
 				</thead>
@@ -66,6 +75,8 @@
 					<tr th:each="file : ${document.files}">
 						<td th:text="${file.fileid}"></td>
 						<td th:text="${file.path}"></td>
+						<td th:text="${file.version}"></td>
+						<td th:text="${file.uploadstamp}"></td>
 						<td><a th:href="'/file/'+${file.fileid}+'/download'" class="btn">download</a></td>
 					</tr>
 				</tbody>
@@ -90,7 +101,8 @@
             
 			
 			<h3>Existing Comments</h3>
-			<div th:each="comment : ${comments}">
+			<div th:each="comment : ${comments}" >
+				<i th:text="${comment.user.name}+' wrote:'"></i>
 				<p th:text="${comment.text}"></p>
 				<!--<textarea rows="5" th:text="${comment.text}" readonly="readonly"></textarea>-->
 			</div>
