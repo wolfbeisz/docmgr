@@ -1,0 +1,9 @@
+available at http://localhost:8080/i.txt
+
+sources:
+http://stackoverflow.com/questions/24661289/spring-boot-not-serving-static-content
+http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-web-applications.html
+
+webjars usage:
+<link rel="stylesheet" type="text/css"
+	href="/webjars/bootstrap/3.0.3/css/bootstrap.min.css" />

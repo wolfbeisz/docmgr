@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
+    <meta charset="utf-8" />
+    <title>View document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link th:href="'/webjars/bootstrap/2.3.2/css/bootstrap.min.css'" href="bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        body {
+            padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="brand" href="#">Project name</a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row-fluid">
+            <h1 th:text="${document.title}">Title comes here</h1>
+            <h2 th:text="${document.user.name}">author</h2>
+
+			
+			<h3>Manage document</h3>
+			<form style="display:inline;" action="#" th:action="'/document/'+${document.documentid}+'/checkout'" method="POST">
+				<button class="btn">checkout</button>
+			</form>
+			<form style="display:inline;" action="#" th:action="'/document/'+${document.documentid}+'/checkin'" method="POST">			
+					<button class="btn">checkin</button>
+			</form>
+			<form style="display:inline;" action="#" th:action="'/document/'+${document.documentid}+'/delete'" method="POST">
+				<button type="submit" class="btn">delete document</button>
+			</form>
+
+			<div th:if="!${#lists.isEmpty(document.files)}">
+			<h3>Files</h3>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<td>fileid</td>
+						<td>path</td>
+						<td>download</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="file : ${document.files}">
+						<td th:text="${file.fileid}"></td>
+						<td th:text="${file.path}"></td>
+						<td><a th:href="'/file/'+${file.fileid}+'/download'" class="btn">download</a></td>
+					</tr>
+				</tbody>
+			</table>
+			</div>
+			
+			<div th:if="!${#lists.isEmpty(document.tags)}"><!-- at least one tag -->
+			<h3>Tags</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <td>Tag Name</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="tag : ${document.tags}">
+                        <td th:text="${tag}"></td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+            
+			
+			<h3>Existing Comments</h3>
+			<div th:each="comment : ${comments}">
+				<p th:text="${comment.text}"></p>
+				<!--<textarea rows="5" th:text="${comment.text}" readonly="readonly"></textarea>-->
+			</div>
+			<form action="#" th:action="'/document/'+${document.documentid}+'/comment'" method="POST">
+				<fieldset>
+					<legend>Comment this document</legend>
+					<textarea rows="10" cols="100" name="commentText">enter your comment here!</textarea>
+					<br />
+					<button type="submit" class="btn">comment</button>
+				</fieldset>
+			</form>
+        </div>
+    </div>
+
+
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script th:src="'/webjars/bootstrap/2.3.2/js/bootstrap.min.js'" src="bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+</html>
