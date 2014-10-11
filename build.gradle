@@ -48,6 +48,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
     
     compile("org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}")
+    compile("org.springframework.boot:spring-boot-starter-security:${springBootVersion}")
 
     compile("postgresql:postgresql:9.1-901-1.jdbc4")
     compile("mysql:mysql-connector-java:5.1.32")
