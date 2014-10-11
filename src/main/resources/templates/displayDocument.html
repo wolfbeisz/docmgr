@@ -40,80 +40,104 @@
             <h1 th:text="${document.title}">Title comes here</h1>
             <h2 th:text="${document.user.name}">author</h2>
 
-			
-			<h3>Manage document</h3>
-			<!-- only show this form if the user hasn't yet checked this document out -->
-			<form style="display:inline;" action="#" th:action="'/document/'+${document.documentid}+'/checkout'" method="POST" th:if="${openChange} == null">
-				<button type="submit" class="btn">checkout</button>
-			</form>
-			<!-- only show this form, if the user has checked out this document -->
-			<form style="display:inline;" action="#" th:action="'/document/'+${document.documentid}+'/checkin'" method="POST" th:if="${openChange} != null" enctype="multipart/form-data">			
-				<fieldset>
-					<legend>Checkin</legend>
-					<input type="file" name="document" />
-					<button type="submit" class="btn">checkin</button>
-				</fieldset>
-			</form>
-			
-			<form style="display:inline;" action="#" th:action="'/document/'+${document.documentid}+'/delete'" method="POST">
-				<button type="submit" class="btn">delete document</button>
-			</form>
+			<div class="tabbable">
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#tab1" data-toggle="tab">management</a></li>
+					<li><a href="#tab2" data-toggle="tab">version history</a></li>
+					<li><a href="#tab3" data-toggle="tab">comments</a></li>
+					<li><a href="#tab4" data-toggle="tab">tags</a></li>
+				</ul>
+				<div class="tab-content">
+					<!-- management -->
+					<div id="tab1" class="active tab-pane">
+						<a th:href="'/document/'+${document.documentid}+'/download'" class="btn">download latest version</a>
 
-			<div th:if="!${#lists.isEmpty(document.files)}">
-			<h3>Files</h3>
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<td>fileid</td>
-						<td>path</td>
-						<td>version</td>
-						<td>upload stamp</td>
-						<td>download</td>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="file : ${document.files}">
-						<td th:text="${file.fileid}"></td>
-						<td th:text="${file.path}"></td>
-						<td th:text="${file.version}"></td>
-						<td th:text="${file.uploadstamp}"></td>
-						<td><a th:href="'/file/'+${file.fileid}+'/download'" class="btn">download</a></td>
-					</tr>
-				</tbody>
-			</table>
+						<!-- only show this form if the user hasn't yet checked this document out -->
+						<form style="display:inline;" action="#" th:action="'/document/'+${document.documentid}+'/checkout'" method="POST" th:if="${openChange} == null">
+							<fieldset>
+								<legend>Checkout</legend>
+								<label>After checkout you can download the document, edit it and upload your version.</label>
+								<button type="submit" class="btn">checkout</button>
+							</fieldset>
+						</form>
+						<!-- only show this form, if the user has checked out this document -->
+						<form style="display:inline;" action="#" th:action="'/document/'+${document.documentid}+'/checkin'" method="POST" th:if="${openChange} != null" enctype="multipart/form-data">			
+							<fieldset>
+								<legend>Checkin</legend>
+								<label>Upload your (edited) version of the document.</label>
+								<input type="file" name="document" />
+								<br />
+								<button type="submit" class="btn">checkin</button>
+							</fieldset>
+						</form>
+						
+						<form style="display:inline;" action="#" th:action="'/document/'+${document.documentid}+'/delete'" method="POST">
+							<button type="submit" class="btn">delete document</button>
+						</form>
+					</div>
+					
+					<!-- version history -->
+					<div id="tab2" class="tab-pane">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<td>fileid</td>
+									<td>path</td>
+									<td>version</td>
+									<td>upload stamp</td>
+									<td>download</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="file : ${document.files}">
+									<td th:text="${file.fileid}"></td>
+									<td th:text="${file.path}"></td>
+									<td th:text="${file.version}"></td>
+									<td th:text="${file.uploadstamp}"></td>
+									<td><a th:href="'/file/'+${file.fileid}+'/download'" class="btn">download</a></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					
+					<!-- comments -->
+					<div id="tab3" class="tab-pane">
+						<div th:each="comment : ${comments}" >
+							<i th:text="${comment.user.name}+' wrote:'"></i>
+							<p th:text="${comment.text}"></p>
+							<!--<textarea rows="5" th:text="${comment.text}" readonly="readonly"></textarea>-->
+						</div>
+						<form action="#" th:action="'/document/'+${document.documentid}+'/comment'" method="POST">
+							<fieldset>
+								<legend>Comment this document</legend>
+								<textarea rows="5" cols="100" name="commentText">enter your comment here!</textarea>
+								<br />
+								<button type="submit" class="btn">comment</button>
+							</fieldset>
+						</form>
+					</div>
+					
+					<!-- tags -->
+					<div id="tab4" class="tab-pane">
+			            <table class="table table-striped">
+			                <thead>
+			                    <tr>
+			                        <td>Tag Name</td>
+			                    </tr>
+			                </thead>
+			                <tbody>
+			                    <tr th:each="tag : ${document.tags}">
+			                        <td th:text="${tag}"></td>
+			                    </tr>
+			                </tbody>
+			            </table>
+		            </div>
+	            </div>
+	            
 			</div>
 			
-			<div th:if="!${#lists.isEmpty(document.tags)}"><!-- at least one tag -->
-			<h3>Tags</h3>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <td>Tag Name</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="tag : ${document.tags}">
-                        <td th:text="${tag}"></td>
-                    </tr>
-                </tbody>
-            </table>
-            </div>
-            
+
 			
-			<h3>Existing Comments</h3>
-			<div th:each="comment : ${comments}" >
-				<i th:text="${comment.user.name}+' wrote:'"></i>
-				<p th:text="${comment.text}"></p>
-				<!--<textarea rows="5" th:text="${comment.text}" readonly="readonly"></textarea>-->
-			</div>
-			<form action="#" th:action="'/document/'+${document.documentid}+'/comment'" method="POST">
-				<fieldset>
-					<legend>Comment this document</legend>
-					<textarea rows="10" cols="100" name="commentText">enter your comment here!</textarea>
-					<br />
-					<button type="submit" class="btn">comment</button>
-				</fieldset>
-			</form>
         </div>
     </div>
 
