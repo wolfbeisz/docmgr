@@ -7,6 +7,7 @@ import javax.servlet.MultipartConfigElement;
 import org.springframework.boot.context.embedded.MultiPartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.wolfbeisz.web.service.FileManager;
 import com.wolfbeisz.web.service.LocalFileManager;
@@ -25,5 +26,11 @@ public class WebConfiguration {
 	public FileManager fileManager() throws IOException
 	{
 		return LocalFileManager.get("docs");
+	}
+	
+	@Bean
+	public UserDetailsService userDetailsService()
+	{
+		return new DatabaseUserDetailsService();
 	}
 }
